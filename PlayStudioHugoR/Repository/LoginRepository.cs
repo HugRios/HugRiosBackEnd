@@ -2,6 +2,7 @@
 using PlayStudioHugoR.Models.Entities;
 using PlayStudioHugoR.Repository.Interfaces;
 using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
 
 namespace PlayStudioHugoR.Repository
 {
@@ -80,10 +81,11 @@ namespace PlayStudioHugoR.Repository
 
         public string ChangePass(string email, string password)
         {
-            var user = dbContext.Users.SingleOrDefault(x => x.email == email);
+            UsersModel user = dbContext.Users.SingleOrDefault(x => x.email == email);
             if (user != null)
             {
                 user.password = BCrypt.Net.BCrypt.HashPassword(password);
+                dbContext.Entry(user).State = EntityState.Modified;
                 dbContext.SaveChanges();
                 return "success";
             }

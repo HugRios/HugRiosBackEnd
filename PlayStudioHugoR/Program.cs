@@ -1,12 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using PlayStudioHugoR.Models.DbPlayContext;
-using PlayStudioHugoR.Repository;
-using PlayStudioHugoR.Repository.Interfaces;
 using SendGrid;
-using SendGrid.Extensions.DependencyInjection;
-using SendGrid.Helpers.Mail;
-using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,8 +19,6 @@ builder.Services.AddSingleton<ISendGridClient>(provider =>
 {
     return new SendGridClient(sendGridApiKey);
 });
-
-
 
 var app = builder.Build();
 

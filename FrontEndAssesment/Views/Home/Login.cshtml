@@ -8,12 +8,28 @@
 
 @{
     var message = TempData["MessageChangePass"] as string;
+    var messageRegistered = TempData["MessageRegister"] as string;
+    var messageError = TempData["MessageError"] as string;
 }
 
 @if (!string.IsNullOrEmpty(message))
 {
-    <div class="alert alert-danger">
+    <div class="alert alert-warning">
         @message
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(messageRegistered))
+{
+    <div class="alert alert-warning">
+        @messageRegistered
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(messageError))
+{
+    <div class="alert alert-warning">
+        @messageError
     </div>
 }
 

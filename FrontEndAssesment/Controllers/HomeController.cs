@@ -1,6 +1,10 @@
 ﻿using FrontEndAssesment.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace FrontEndAssesment.Controllers
 {
@@ -34,10 +38,31 @@ namespace FrontEndAssesment.Controllers
             return View();
         }
 
-        public IActionResult NewPassword()
+        public IActionResult NewPassword(string user)
+        {
+            TempData["User"] = user;
+            return View();
+        }
+
+        public IActionResult EmailAlert()
         {
             return View();
         }
+
+        public IActionResult UserLogged()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                // Usuario autenticado
+                return View();
+            }
+            else
+            {
+                // Usuario no autenticado
+                return Unauthorized("Usuario no autenticado");
+            }
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel loginModel)
@@ -55,12 +80,26 @@ namespace FrontEndAssesment.Controllers
                     var message = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     if (!response.IsSuccessStatusCode)
                     {
+                        TempData["MessageError"] = message;
                         return View();
+                    }
+                    else
+                    {
+
+                        var claims = new[]
+                                                    {
+                                        new Claim("name", loginModel.Username)
+                                            };
+
+                        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                        await HttpContext.SignInAsync("MyCookieAuth", new ClaimsPrincipal(identity));
+                        return View("UserLogged");
                     }
                 }
                 return View();
             }
-            catch
+            catch(Exception ex)
             {
                 return View();
             }
@@ -79,10 +118,12 @@ namespace FrontEndAssesment.Controllers
                     var message = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     if (!response.IsSuccessStatusCode)
                     {
-                        return RedirectToPage("/Register");
+                        TempData["MessageRegister"] = message;
+                        return View();
                     }
                 }
-                return View();
+                TempData["MessageRegister"] = "User has registered";
+                return View("Login");
             }
             catch
             {
@@ -105,7 +146,11 @@ namespace FrontEndAssesment.Controllers
                     if (!response.IsSuccessStatusCode)
                     {
                         TempData["ErrorLogin"] = message;
-                       View();
+                        return View();
+                    }
+                    else
+                    {
+                        return View("EmailAlert");
                     }
                 }
                 return View();
@@ -115,14 +160,13 @@ namespace FrontEndAssesment.Controllers
                 return View();
             }
         }
-
+         
 
         [HttpPost]
         public async Task<IActionResult> NewPassword(UsersModel usersModel)
         {
             try
             {
-                usersModel.email = "huguitorude@gmail.com";
                 usersModel.full_name = "";
                 if (usersModel.password != null)
                 {

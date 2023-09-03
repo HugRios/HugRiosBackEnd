@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using PlayStudioHugoR.Models;
 using PlayStudioHugoR.Models.DbPlayContext;
@@ -15,13 +15,12 @@ namespace PlayStudioHugoR.Controllers
         private readonly PlayStudioDbContext dbContext;
         private readonly IConfiguration _configuration;
         private readonly ISendGridClient _sendGridClient;
-
         public LoginController(PlayStudioDbContext dbContext, IConfiguration configuration,
-            ISendGridClient sendGridClient) {
+            ISendGridClient sendGridClient)
+        {
             this.dbContext = dbContext;
             _configuration = configuration;
             _sendGridClient = sendGridClient;
-
         }
 
         [HttpGet]
@@ -65,7 +64,7 @@ namespace PlayStudioHugoR.Controllers
 
         [HttpPost]
         [Route("User/Login")]
-        public IActionResult InsertUser([FromBody] LoginModel login)
+        public async Task<IActionResult> InsertUser([FromBody] LoginModel login)
         {
             try
             {

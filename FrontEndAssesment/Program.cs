@@ -1,4 +1,5 @@
 using FrontEndAssesment.Controllers;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Runtime;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +22,22 @@ configuration.GetSection("UrlSettings").Bind(urlSetting);
 // Register MySettings as a service
 builder.Services.AddSingleton(urlSetting);
 
+//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//    .AddCookie(options =>
+//    {
+//        options.Cookie.HttpOnly = true;
+//        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+//        //options.LoginPath = "/Account/Login";
+//        options.AccessDeniedPath = "/Home/UserLogged";
+//    });
 
+builder.Services.AddAuthentication("MyCookieAuth").AddCookie("MyCookieAuth", options => {
+
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    //options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Home/UserLogged";
+});
 
 var app = builder.Build();
 
@@ -32,13 +48,15 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseRouting();
 
-app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",

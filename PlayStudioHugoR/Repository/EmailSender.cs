@@ -23,14 +23,16 @@ namespace PlayStudioHugoR.Repository
             {
                 throw new Exception("Email " + username + " does not exist");
             }
+            var prod = "https://playstudiosrios.azurewebsites.net/Home/NewPassword?user=" +username;
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress("huguitorude@gmail.com", "Example User"),
-                Subject = "Sending with Twilio SendGrid is Fun"
+                From = new EmailAddress("huguitorude@gmail.com", "Assesment User"),
+                Subject = "You've requested a password reset"
             };
-            msg.AddContent(MimeType.Text, "and easy to do anywhere, even with C#");
-            msg.AddTo(new EmailAddress("hugo.rios.cr@gmail.com", "Example User"));
-            msg.TemplateId = "d-3dfd08f496114e5aa16f6490581180a1";
+            msg.AddContent(MimeType.Text, "Hello, We have sent you this email in response to your request to reset your password.\n" +
+                "To reset your password, please follow the link below: \n" +
+                prod);
+            msg.AddTo(new EmailAddress(username, "Example User"));
             try
             {
                 var response = await _sendGridClient.SendEmailAsync(msg).ConfigureAwait(false);
