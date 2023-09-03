@@ -361,3 +361,13 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+appsettings.Production.json
+appsettings.Development.json
+appsettings.json
+
+/PlayStudioHugoR/appsettings.Production.json
+/PlayStudioHugoR/appsettings.Development.json
+/PlayStudioHugoR/appsettings.json
+/FrontEndAssesment/appsettings.json
+/FrontEndAssesment/appsettings.Production.json
+/FrontEndAssesment/appsettings.Development.json
